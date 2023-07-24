@@ -2,6 +2,8 @@ import {useEffect} from "react";
 import useState from 'react-usestateref'
 import './App.css';
 import axios from 'axios';
+import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
+
 
 function App() {
     const CLIENT_ID = "7977f05d237f4bb5bba138d645ccffb8"
@@ -14,6 +16,11 @@ function App() {
     const [playlists, setPlaylists] = useState([])
     const [trackData, setTrackData, trackDataRef] = useState([])
     const [tracks, setTracks, tracksRef] = useState([])
+    const [acousticness, setAcousticness, acousticnessRef] = useState()
+    const [danceability, setDanceability, danceabilityRef] = useState()
+    const [valence, setValence, valenceRef] = useState()
+    const [energy, setEnergy, energyRef] = useState()
+    const [instrumentalness, setInstrumentalness, instrumentalnessRef] = useState()
 
     useEffect(() => {
         const hash = window.location.hash
@@ -41,15 +48,20 @@ function App() {
     const fetchUserPlaylists = async (e) => {
         e.preventDefault()
 
-        const {data} = await axios.get("https://api.spotify.com/v1/me/playlists", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            params: {
-                limit: 50
+            const {data} = await axios.get("https://api.spotify.com/v1/me/playlists", 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                params: {
+                    limit: 50
 
-            }
-        })
+                }
+            }).catch (function (e) {
+                console.warn("Authentication error. Please login again.") // TODO: create new function that returns a block of error text on failed login
+                logout()
+            })
+        
 
         console.log("user playlists: ")
         console.log(data)
@@ -60,8 +72,8 @@ function App() {
         setPlaylistKey(playlist.tracks.href)
     }
 
-    const findPlaylist = async (e) => { // TODO: take playlistKey and find playlist
-        e.preventDefault()
+    const findPlaylist = async () => { 
+        // e.preventDefault()
 
         var offset = 0;
         var temp = []
@@ -82,28 +94,24 @@ function App() {
         } while (data.next !== null);
 
         setTracks(temp)
-
-        var trackIds = ""
-
+        
         console.warn("playlist data: ")
         console.log(tracksRef.current)
+        setTrackData([]) // reset track data
 
+        let trackIds = ""
         for (let index = 0; index < tracksRef.current.length; index++) {
             let track = tracksRef.current[index]
         
             try {
             trackIds += track.track.id + ","
-            // console.log("index:" + index + " trackids:" + trackIds)
             
             if ((index%100 == 99) || (index >= (tracksRef.current.length-1))) {
-                // console.warn("CALLED at index: " + index)
                 await fetchTrackData(trackIds)
                 trackIds=""
             }
             
         } catch (e) {}
-            
-        
         }
         console.warn("track audio data: ")
         console.log(trackDataRef.current)
@@ -122,41 +130,77 @@ function App() {
         setTrackData(trackDataRef.current.concat(data.audio_features))
     }
 
+    function analyseTrackData() {
+        let input = {acousticness: [], danceability: [], valence: [], energy: [], instrumentalness: []}
+        for (let i = 0; i < trackDataRef.current.length; i++) {
+            try {
+                input.acousticness.push(trackDataRef.current[i].acousticness)
+                input.danceability.push(trackDataRef.current[i].danceability)
+                input.valence.push(trackDataRef.current[i].valence)
+                input.energy.push(trackDataRef.current[i].energy)
+                input.instrumentalness.push(trackDataRef.current[i].instrumentalness)
+            } catch (e) {
+                console.log("null track at index " + i)
+            }
+        }
+        // console.log("original")
+        // console.log(input.energy)
+        // console.log("transformed")
+        // console.log(sigmoidTransform(input.energy, 10, 0.5))
+        // console.log(avg(input.energy) + " " + avg(sigmoidTransform(input.energy, 10, 0.5)))
+
+        setAcousticness(avg(percentileNormalization(input.acousticness, "acousticness")))
+        setDanceability(avg(sigmoidTransform(percentileNormalization(input.danceability, "danceability"), 10, 0.5)))
+        
+        setValence(avg(sigmoidTransform(percentileNormalization(input.valence, "valence"), 10, 0.5)))
+
+        setEnergy(avg(sigmoidTransform(percentileNormalization(input.energy, "energy"), 10, 0.5)))
+        setInstrumentalness(avg(percentileNormalization(input.instrumentalness, "instrumentalness")))
+        
+    }
+
+    async function handleSubmit() {
+        await findPlaylist()
+        analyseTrackData()
+    }
+
 
 
     const renderPlaylists = () => {
         return (
             <div>
-                <form onSubmit={findPlaylist} >
-                    {playlists.map(playlist => (
-                    <div key={playlist.id}>
-                        {playlist.images.length ? 
-                            <button type="button" onClick={() => handlePlaylistKeyChange(playlist)}>
-                                <img width={"100%"} src={playlist.images[0].url} alt="playlist picture"/> 
-                            </button>
+                <form onSubmit={handleSubmit} >
+                    <div className="playlist-container">
+                        {playlists.map(playlist => (
+                        <div key={playlist.id} className="playlist">
+                            {playlist.images.length ? 
+                                <button type="button" onClick={() => handlePlaylistKeyChange(playlist)}>
+                                    <img width={"100%"} src={playlist.images[0].url} alt="playlist picture"/> 
+                                </button>
 
-                        : <div>No Image</div>}
-                        {playlist.name}
+                            : <div>No Image</div>}
+                            {playlist.name}
+                        </div>
+                        ))}
                     </div>
-                    ))}
                     {token ? <button type="submit">submit</button> : <></>}
                     
                 </form>
+            
+
             </div>
         )
             
     }
 
-    const renderTracks = () => {
+    const renderData = () => {
         return (
             <div>
-                {tracks.map(track => (
-                    track.track !== null ? // spotify has null tracks in playlists apparently
-                <div key={track.track.id}>
-                    {track.track.name}
-                </div>
-                : <></>
-                ))}    
+                 <p> Acousticness: {acousticnessRef.current} </p>
+                 <p> Danceability: {danceabilityRef.current} </p>
+                 <p> Valence: {valenceRef.current} </p>
+                 <p> Energy: {energyRef.current} </p>
+                 <p> Instrumentalness: {instrumentalnessRef.current} </p>
             </div>
         )
             
@@ -180,7 +224,7 @@ function App() {
                 }
 
                 {renderPlaylists()}
-                {renderTracks()}
+                {renderData()}
             </header>
         </div>
     );
