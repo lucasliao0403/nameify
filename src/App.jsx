@@ -3,6 +3,7 @@ import useState from 'react-usestateref'
 import './App.css';
 import axios from 'axios';
 import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
+import Model from './model'
 
 
 function App() {
@@ -143,17 +144,9 @@ function App() {
                 console.log("null track at index " + i)
             }
         }
-        // console.log("original")
-        // console.log(input.energy)
-        // console.log("transformed")
-        // console.log(sigmoidTransform(input.energy, 10, 0.5))
-        // console.log(avg(input.energy) + " " + avg(sigmoidTransform(input.energy, 10, 0.5)))
-
         setAcousticness(avg(percentileNormalization(input.acousticness, "acousticness")))
         setDanceability(avg(sigmoidTransform(percentileNormalization(input.danceability, "danceability"), 10, 0.5)))
-        
         setValence(avg(sigmoidTransform(percentileNormalization(input.valence, "valence"), 10, 0.5)))
-
         setEnergy(avg(sigmoidTransform(percentileNormalization(input.energy, "energy"), 10, 0.5)))
         setInstrumentalness(avg(percentileNormalization(input.instrumentalness, "instrumentalness")))
         
@@ -213,6 +206,9 @@ function App() {
         <div className="App">
             <header className="App-header">
                 <h1>Spotify React</h1>
+
+                <Model/>
+
                 {!token ?
                     <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
                         to Spotify</a>
