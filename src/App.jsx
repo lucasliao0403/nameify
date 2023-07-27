@@ -3,7 +3,6 @@ import useState from 'react-usestateref'
 import './App.css';
 import axios from 'axios';
 import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
-import { ModelCanvas } from "./model.jsx";
 import ParticleBackground from "./particles/ParticleBackground.jsx"
 
 
