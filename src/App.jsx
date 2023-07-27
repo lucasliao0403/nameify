@@ -3,6 +3,8 @@ import useState from 'react-usestateref'
 import './App.css';
 import axios from 'axios';
 import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
+import { ModelCanvas } from "./model.jsx";
+import ParticleBackground from "./particles/ParticleBackground.jsx"
 
 
 function App() {
@@ -258,6 +260,7 @@ function App() {
 
     return (
         <div className="App">
+            <ParticleBackground/>
             <header className="App-header">
                 <h1>Nameify</h1>
 
