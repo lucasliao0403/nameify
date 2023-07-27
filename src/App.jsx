@@ -3,7 +3,6 @@ import useState from 'react-usestateref'
 import './App.css';
 import axios from 'axios';
 import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
-import Model from './model'
 
 
 function App() {
@@ -22,6 +21,11 @@ function App() {
     const [valence, setValence, valenceRef] = useState()
     const [energy, setEnergy, energyRef] = useState()
     const [instrumentalness, setInstrumentalness, instrumentalnessRef] = useState()
+    const [prompt, setPrompt, promptRef] = useState()
+    const [input, setInput, inputRef] = useState('');
+    const [response, setResponse, responseRef] = useState('');
+
+    const [generatedNames, setGeneratedNames, generatedNamesRef] = useState([]) // final responses
 
     useEffect(() => {
         const hash = window.location.hash
@@ -69,15 +73,12 @@ function App() {
         setPlaylists(data.items)
     }
 
-    function handlePlaylistKeyChange (playlist) {
-        setPlaylistKey(playlist.tracks.href)
-    }
-
-    const findPlaylist = async () => { 
-        // e.preventDefault()
-
+    async function fetchPlaylistData() { 
         var offset = 0;
         var temp = []
+        
+        // playlistkey example: "https://api.spotify.com/v1/playlists/0Or3Z4tgGlafLh6KZXOmTE/tracks"
+
         do {
             var {data} = await axios.get(playlistKey, {
                 headers: {
@@ -96,8 +97,8 @@ function App() {
 
         setTracks(temp)
         
-        console.warn("playlist data: ")
-        console.log(tracksRef.current)
+        // console.warn("playlist data: ")
+        // console.log(tracksRef.current)
         setTrackData([]) // reset track data
 
         let trackIds = ""
@@ -114,8 +115,8 @@ function App() {
             
         } catch (e) {}
         }
-        console.warn("track audio data: ")
-        console.log(trackDataRef.current)
+        // console.warn("track audio data: ")
+        // console.log(trackDataRef.current)
 
     }
 
@@ -151,11 +152,54 @@ function App() {
         setInstrumentalness(avg(percentileNormalization(input.instrumentalness, "instrumentalness")))
         
     }
+    
+    function generatePrompt() {
+        setPrompt(`8 creative poetic 2/3-word playlist names: 
+        ${acousticnessRef.current}/10 acousticness, 
+        ${danceabilityRef.current}/10 danceability, 
+        ${valenceRef.current}/10 valence, 
+        ${energyRef.current}/10 energy, 
+        ${instrumentalnessRef.current}/10 instrumentalness. 
+        genre: ${inputRef.current}.
+        Do not use genre name. Mood is ${inputRef.current}
+        ` )
+    }
+
+    function formatResponse() { // TODO
+        let formattedArray = responseRef.current.split('\n');
+        for (let i = 0; i < formattedArray.length; i++) {
+            formattedArray[i] = formattedArray[i].substring(3).replace('"', '')
+        }
+        setGeneratedNames(formattedArray)
+
+    }
 
     async function handleSubmit() {
-        await findPlaylist()
+        await fetchPlaylistData()
         analyseTrackData()
+        generatePrompt()
+        await handleGenreSubmit()
+        formatResponse()
     }
+
+    function handlePlaylistKeyChange (playlist) {
+        setPlaylistKey(playlist.tracks.href)
+    }
+
+    async function handleGenreSubmit() {
+        console.log("prompt: \n" + promptRef.current)
+        try {
+        
+            const result = await axios.post('http://localhost:8000/chatgpt', 
+                {input: promptRef.current}
+            );
+            setResponse(result.data);
+        } catch (error) {
+            setResponse('An error occurred while processing your request.');
+        }
+
+        console.log(responseRef.current)
+    };
 
 
 
@@ -186,18 +230,28 @@ function App() {
             
     }
 
-    const renderData = () => {
+    const renderModel = () => {
         return (
             <div>
-                 <p> Acousticness: {acousticnessRef.current} </p>
-                 <p> Danceability: {danceabilityRef.current} </p>
-                 <p> Valence: {valenceRef.current} </p>
-                 <p> Energy: {energyRef.current} </p>
-                 <p> Instrumentalness: {instrumentalnessRef.current} </p>
+                <label htmlFor="input">Genre: </label>
+                <input
+                type="text"
+                className="input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                />
+
+                <div>
+                    <h3>Response:</h3>
+                    <div>
+                        {generatedNames.map(name => (
+                            <div> {name} </div>
+                        ))}
+                    </div>
+                </div>
             </div>
-        )
-            
-    }
+        );
+      };
 
 
 
@@ -205,9 +259,9 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <h1>Spotify React</h1>
+                <h1>Nameify</h1>
 
-                <Model/>
+                {renderModel()}
 
                 {!token ?
                     <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
@@ -220,7 +274,6 @@ function App() {
                 }
 
                 {renderPlaylists()}
-                {renderData()}
             </header>
         </div>
     );

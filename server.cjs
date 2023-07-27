@@ -38,6 +38,7 @@ app.post('/chatgpt', async (req, res) => {
     const response = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: messages,
+        max_tokens: 100,
       });
 
     // console.log(response.data.choices[0].message.content)

@@ -75,7 +75,7 @@ export function avg(arr) {
     for (const num of arr) {
         sum += num
     }
-    return ((sum/arr.length).toFixed(2))
+    return ((sum*10/arr.length).toFixed(1))
 }
 
 

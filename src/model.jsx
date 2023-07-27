@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Model = () => {
-  const [input, setInput] = useState('');
+const Model = (props) => {
   const [response, setResponse] = useState('');
 
   const handleSubmit = async (e) => {
@@ -12,11 +11,8 @@ const Model = () => {
       const result = await axios.post('http://localhost:8000/chatgpt', {
         input
       });
-      console.log("result: ")
-      console.log(result)
       setResponse(result.data);
     } catch (error) {
-      console.error(error);
       setResponse('An error occurred while processing your request.');
     }
   };
@@ -28,8 +24,8 @@ const Model = () => {
         <input
           type="text"
           id="input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          value={props.input}
+          onChange={(e) => props.setInput(e.target.value)}
         />
         <button type="submit">Submit</button>
       </form>
