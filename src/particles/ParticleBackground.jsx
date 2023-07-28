@@ -5,11 +5,11 @@ import {particlesConfig} from './config.js'
 import { loadFull } from "tsparticles";
 export default function ParticleBackground() {
 	const particlesInit = async (main) => {
-		console.log(main);
+		// console.log(main);
 		await loadFull(main);
 	};
 	const particlesLoaded = (container) => {
-		console.log(container);
+		// console.log(container);
 	};
 	return (
 		<Particles

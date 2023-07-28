@@ -12,7 +12,7 @@ function App() {
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
-    const [token, setToken] = useState("")
+    const [token, setToken, tokenRef] = useState("")
     const [playlistKey, setPlaylistKey] = useState("")
     const [playlists, setPlaylists] = useState([])
     const [trackData, setTrackData, trackDataRef] = useState([])
@@ -24,16 +24,20 @@ function App() {
     const [instrumentalness, setInstrumentalness, instrumentalnessRef] = useState()
     const [prompt, setPrompt, promptRef] = useState()
     const [input, setInput, inputRef] = useState('');
-    const [response, setResponse, responseRef] = useState('');
-
     const [generatedNames, setGeneratedNames, generatedNamesRef] = useState([]) // final responses
+    const [response, setResponse, responseRef] = useState('');
+    const [step, setStep] = useState(0)
+    // step 0: login
+    // step 1: select playlist
+    // step 2: enter genre
+    // step 3: playlist names
+    
+
+    console.log("step: ", step)
 
     useEffect(() => {
         const hash = window.location.hash
         let token = window.localStorage.getItem("token")
-
-        // getToken()
-
 
         if (!token && hash) {
             token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
@@ -46,18 +50,28 @@ function App() {
 
     }, [])
 
+    useEffect(() => { // ON LOGIN
+        if(tokenRef.current) {
+            fetchUserPlaylists() 
+            setStep(1)
+        }
+        
+    }, [tokenRef.current])
+
+
+
     const logout = () => {
+        setStep(0)
         setToken("")
         window.localStorage.removeItem("token")
     }
 
-    const fetchUserPlaylists = async (e) => {
-        e.preventDefault()
+    async function fetchUserPlaylists()  {
 
             const {data} = await axios.get("https://api.spotify.com/v1/me/playlists", 
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${tokenRef.current}`
                 },
                 params: {
                     limit: 50
@@ -69,8 +83,6 @@ function App() {
             })
         
 
-        console.log("user playlists: ")
-        console.log(data)
         setPlaylists(data.items)
     }
 
@@ -116,6 +128,7 @@ function App() {
             
         } catch (e) {}
         }
+
         // console.warn("track audio data: ")
         // console.log(trackDataRef.current)
 
@@ -166,7 +179,7 @@ function App() {
         ` )
     }
 
-    function formatResponse() { // TODO
+    function formatResponse() { 
         let formattedArray = responseRef.current.split('\n');
         for (let i = 0; i < formattedArray.length; i++) {
             formattedArray[i] = formattedArray[i].substring(3).replace('"', '')
@@ -175,12 +188,15 @@ function App() {
 
     }
 
-    async function handleSubmit() {
+    async function handleSubmit(e) {
+        e.preventDefault()
         await fetchPlaylistData()
         analyseTrackData()
         generatePrompt()
         await handleGenreSubmit()
         formatResponse()
+        setInput("")
+        setStep(3)
     }
 
     function handlePlaylistKeyChange (playlist) {
@@ -204,79 +220,105 @@ function App() {
 
 
 
-    const renderPlaylists = () => {
-        return (
-            <div>
-                <form onSubmit={handleSubmit} >
+    const renderPlaylists = () => { // step 1
+        return (<div>
+            {token ?
+            <div className="playlist-page">
+                <h3> select a playlist: </h3>
                     <div className="playlist-container">
                         {playlists.map(playlist => (
                         <div key={playlist.id} className="playlist">
                             {playlist.images.length ? 
-                                <button type="button" onClick={() => handlePlaylistKeyChange(playlist)}>
+                                <button className="playlist-button" type="button" onClick={() => handlePlaylistKeyChange(playlist)}>
                                     <img width={"100%"} src={playlist.images[0].url} alt="playlist picture"/> 
                                 </button>
 
                             : <div>No Image</div>}
-                            {playlist.name}
+
+                            <h2>{playlist.name}</h2>
                         </div>
                         ))}
                     </div>
-                    {token ? <button type="submit">submit</button> : <></>}
+                    {step==2 ? <button onClick={() => handleSubmit()}>submit</button> : <></>}
                     
-                </form>
-            
 
+            
+                <button onClick={() => setStep(2)}> next </button>
+            </div>
+            : <></>}
             </div>
         )
             
     }
+    
+    
 
-    const renderModel = () => {
+    const renderModel = () => { // step 2
         return (
-            <div>
-                <label htmlFor="input">Genre: </label>
-                <input
-                type="text"
-                className="input"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                />
-
-                <div>
-                    <h3>Response:</h3>
-                    <div>
-                        {generatedNames.map(name => (
-                            <div> {name} </div>
-                        ))}
-                    </div>
+            <div>  
+                {token ? 
+                <div className="submit">
+                    <form onSubmit={handleSubmit} >
+                        <div>
+                            genre/mood/purpose: <input
+                            placeholder="what's it about?"
+                            type="text"
+                            className="input"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            />
+                        </div> 
+                        <button className="submit-button" type="submit">submit</button>
+                    </form>
+                    <button className="goback-button" onClick={() => setStep(1)}> go back </button>
                 </div>
+                : <></>}
             </div>
         );
       };
 
-
+    const renderResponse = () => { // step 3
+        return(
+            <div>
+                <h3>titles:</h3>
+                <div className="responses">
+                    {generatedNames.map(name => (
+                        <div> {name} </div>
+                    ))}
+                </div>
+                <button className="goback-button" onClick={() => setStep(1)}>do it again</button>
+            </div>
+        )
+    }
 
 
     return (
-        <div className="App">
+        <div className="app">
             <ParticleBackground/>
-            <header className="App-header">
-                <h1>Nameify</h1>
+            <div className="header">
+                {token ? <button onClick={logout}className= "app-logout"> logout</button>: <></>}
+            </div>
 
-                {renderModel()}
+            <header className="app-header">
+                <h1>Name<span>ify</span></h1>
 
-                {!token ?
-                    <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
-                        to Spotify</a>
-                    : <button onClick={logout}>Logout</button>}
+                {step==0 ? <h3><span>a.i.</span> generated playlist names.</h3> : <></>}
 
-                {token ?
-                    <button onClick={fetchUserPlaylists}> show playlists </button>
-                    : <h2>Please login</h2>
-                }
+                <div className="app-auth">
+                    {!token ?
+                        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
+                            <p>login to spotify</p>
+                        </a>
+                        : <></>}
+                </div>
 
-                {renderPlaylists()}
             </header>
+            
+            {step==1 ? renderPlaylists() : <></>}
+            {step==2 ? renderModel() : <></>}
+            {step==3 ? renderResponse(): <></>}
+
+            
         </div>
     );
 }

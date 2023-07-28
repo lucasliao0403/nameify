@@ -1,26 +1,130 @@
+
+
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+
+}
+
+.header {
+    display: flex;
+    justify-content: right;
+}
+
+.header button {
+    border: none;
+    background-color: rgb(var(--green));
+    color: black;
+}
+
+.header button:hover {
+    outline: 2px solid white;
+    background-color: rgb(var(--green));
+    color: white;
+}
+
+.app-header {
+    display: inline;
+}
+
+.app-header h1 {
+    color: white;
+    font-weight: 600;
+    font-size: 5rem;
+    margin: 1.2rem;
+    margin-bottom: 0.3rem;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+.app-header h3 {
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 3rem;
+    margin-top: 0;
+}
+
+.app-header span {
+    color: rgb(var(--green));
+    filter: drop-shadow(0 0 4px rgba(var(--green), 1));
+}
+
+.app-header:hover {
+    cursor: crosshair;
+}
+
+.app-auth {
+    /* border: 2px solid white; */
+    border-radius: 5px;
+    display: inline;
+    padding: .5rem 0;
+}
+
+.app-auth p{
+    color: white;
+    text-decoration: underline solid;
+    display: inline;
+}
+
+.app-logout {
+    background-color: transparent;
+}
+
+.playlist-page h3 {
+    margin: 0;
+    margin-top: 1rem;
+    color: white;
+    font-size: 1rem;
 }
 
 .playlist-container {
     display: flex;
     flex-wrap: wrap;
-    padding: 2rem
+    justify-content: center;
+    padding: 2rem;
+    
 }
 
 .playlist {
-    height: 100px;
-    width: 100px;
+    height: auto;
+    width: auto;
     padding: 1rem;
+    max-width: 20vw;
 }
 
-.playlist button {
-    background-color: #1a1a1a;
-    padding: .5rem;
+.playlist-button {
+    padding: 1px;
+    height: auto;
 }
 
+.playlist img {
+    max-height: 245px;
+    height: 20vw;
+}
+
+.playlist h2 {
+    font-size: 1rem;
+    height: 25px;
+}
+
+
+.input {
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.submit-button{
+    margin-top: 1rem;
+}
+
+.goback-button {
+    margin-top: 5rem
+}
+
+.submit input {
+    border-radius: 5px;
+}
 
 

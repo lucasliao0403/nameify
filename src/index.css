@@ -1,10 +1,7 @@
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
+    font-family: 'IBM Plex Mono', monospace;
 
     color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -13,8 +10,9 @@
     -webkit-text-size-adjust: 100%;
 
     --green: 29, 185, 84;
-    --purple: 190, 107, 250;
-
+    --purple: 177, 100, 233;
+    --charcoal: 40, 40, 40;
+    --black: 25, 20, 20;
 }
 
 a {
@@ -41,18 +39,18 @@ h1 {
 
 button {
     color: white;
-    border-radius: 8px;
-    border: 1px solid transparent;
+    border-radius: 5px;
+    border: 2px solid white;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: rgba(var(--green), 1);
+    background-color: transparent;
     cursor: pointer;
     transition: border-color 0.25s;
 }
 button:hover {
-     border-color: #646cff;
+     border-color: rgb(var(--green));
 }
 button:focus,
 button:focus-visible {
