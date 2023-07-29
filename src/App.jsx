@@ -10,7 +10,7 @@ import Footer from "./Footer.jsx";
 
 function App() {
     const CLIENT_ID = "7977f05d237f4bb5bba138d645ccffb8"
-    const REDIRECT_URI = "http://localhost:5173"
+    const REDIRECT_URI = "https://nameify.vercel.app"
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
