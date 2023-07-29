@@ -325,7 +325,7 @@ function App() {
             <div/> {/*no idea why this empty div has to be here but it need to be here*/ }
             <motion.img
             style={{ scale: 0.1}}
-                src={"/arrow.png"}
+                src={"/frontend/public/arrow.png"}
                 initial={{rotate: 180}}
                 whileInView={{ rotate: 0}}
                 transition={{duration: .2,}}
