@@ -14,6 +14,10 @@ function App() {
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
+    const scopes = [
+        "playlist-read-private"
+    ]
+
     const [token, setToken, tokenRef] = useState("")
     const [playlistKey, setPlaylistKey] = useState("")
     const [playlists, setPlaylists] = useState([])
@@ -311,7 +315,7 @@ function App() {
 
                 <div className="app-auth">
                     {!token ?
-                        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>
+                        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${scopes.join("%20")}&response_type=${RESPONSE_TYPE}`}>
                             <p>login to spotify</p>
                         </a>
                         : <></>}
