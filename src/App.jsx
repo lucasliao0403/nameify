@@ -5,7 +5,7 @@ import axios from 'axios';
 import {motion} from "framer-motion";
 import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
 import ParticleBackground from "./particles/ParticleBackground.jsx"
-import Footer from "./footer";
+import Footer from "./Footer.jsx";
 
 
 function App() {
