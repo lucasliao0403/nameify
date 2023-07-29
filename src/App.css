@@ -10,6 +10,7 @@
 }
 
 .header {
+    margin-top: 3rem;
     display: flex;
     justify-content: right;
 }
@@ -115,16 +116,74 @@
     font-family: 'IBM Plex Mono', monospace;
 }
 
+.submit-query {
+    margin-top: 3rem;
+}
+
 .submit-button{
-    margin-top: 1rem;
+    margin-top: 3rem;
 }
 
 .goback-button {
-    margin-top: 5rem
+    margin-top: 3rem
 }
+
+
 
 .submit input {
     border-radius: 5px;
 }
+
+.footer {
+    text-align: center;
+    /* margin-top: 20vw; */
+    display: flex;
+    justify-content: center;
+}
+
+.footer a:hover {
+    text-decoration: wavy underline 1px white;
+    color: rgb(var(--green))
+}
+
+.footer-container {
+    margin: 0;
+    max-width: 600px;
+}
+
+.footer-outline {
+    outline: 2px solid white;
+}
+
+.footer-container h2 {
+    padding-top: 1rem;
+}
+
+.footer-container span {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, .8));
+}
+
+.footer-container a {
+    color: rgb(var(--green))
+}
+
+.footer-container h3 {
+    margin-top: 5rem;
+}
+
+.footer-container h3 a {
+    color: rgb(var(--green))
+}
+
+.footer-container div {
+    margin: 0 4rem;
+}
+
+.footer-container p {
+    text-align: left;
+    padding: 1rem;
+    padding-top: 0;
+}
+
 
 

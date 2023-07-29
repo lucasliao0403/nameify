@@ -2,8 +2,10 @@ import {useEffect} from "react";
 import useState from 'react-usestateref'
 import './App.css';
 import axios from 'axios';
+import {motion} from "framer-motion";
 import {percentileNormalization, avg, sigmoidTransform} from './utils.jsx'
 import ParticleBackground from "./particles/ParticleBackground.jsx"
+import Footer from "./footer";
 
 
 function App() {
@@ -30,10 +32,10 @@ function App() {
     // step 0: login
     // step 1: select playlist
     // step 2: enter genre
-    // step 3: playlist names
+    // step 3: returned playlist names
     
 
-    console.log("step: ", step)
+    // console.log("step: ", step)
 
     useEffect(() => {
         const hash = window.location.hash
@@ -182,7 +184,7 @@ function App() {
     function formatResponse() { 
         let formattedArray = responseRef.current.split('\n');
         for (let i = 0; i < formattedArray.length; i++) {
-            formattedArray[i] = formattedArray[i].substring(3).replace('"', '')
+            formattedArray[i] = formattedArray[i].substring(3).replace('"', '').replace('"', '')
         }
         setGeneratedNames(formattedArray)
 
@@ -243,7 +245,10 @@ function App() {
                     
 
             
-                <button onClick={() => setStep(2)}> next </button>
+                <button onClick={() => {
+                setStep(2) 
+                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }
+                )}}> next </button>
             </div>
             : <></>}
             </div>
@@ -259,7 +264,7 @@ function App() {
                 {token ? 
                 <div className="submit">
                     <form onSubmit={handleSubmit} >
-                        <div>
+                        <div className="submit-query">
                             genre/mood/purpose: <input
                             placeholder="what's it about?"
                             type="text"
@@ -295,7 +300,7 @@ function App() {
     return (
         <div className="app">
             <ParticleBackground/>
-            <div className="header">
+            <div className="header" style={step==0?{marginTop: "30vh"}:{marginTop: "3rem"}}>
                 {token ? <button onClick={logout}className= "app-logout"> logout</button>: <></>}
             </div>
 
@@ -317,6 +322,16 @@ function App() {
             {step==1 ? renderPlaylists() : <></>}
             {step==2 ? renderModel() : <></>}
             {step==3 ? renderResponse(): <></>}
+            <div/> {/*no idea why this empty div has to be here but it need to be here*/ }
+            <motion.img
+            style={{ scale: 0.1}}
+                src={"/arrow.png"}
+                initial={{rotate: 180}}
+                whileInView={{ rotate: 0}}
+                transition={{duration: .2,}}
+            />
+            <Footer step={step}/>
+            
 
             
         </div>
