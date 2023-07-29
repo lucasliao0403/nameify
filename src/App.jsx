@@ -209,7 +209,7 @@ function App() {
         console.log("prompt: \n" + promptRef.current)
         try {
         
-            const result = await axios.post('http://localhost:8000/chatgpt', 
+            const result = await axios.post('https://yy3qnh4t72.execute-api.us-east-1.amazonaws.com/prod/chatgpt', 
                 {input: promptRef.current}
             );
             setResponse(result.data);
@@ -325,7 +325,7 @@ function App() {
             <div/> {/*no idea why this empty div has to be here but it need to be here*/ }
             <motion.img
             style={{ scale: 0.1}}
-                src={"/frontend/public/arrow.png"}
+                src={"/arrow.png"}
                 initial={{rotate: 180}}
                 whileInView={{ rotate: 0}}
                 transition={{duration: .2,}}
