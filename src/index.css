@@ -37,6 +37,11 @@ h1 {
     line-height: 1.1;
 }
 
+p {
+    font-size: 1.2rem;
+    display: inline-block;
+}
+
 button {
     color: white;
     border-radius: 5px;
@@ -54,6 +59,7 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+    border: 2px solid rgb(var(--green));
+    outline: 2px solid rgb(var(--green)); 
 }
 

@@ -10,7 +10,8 @@ import Footer from "./Footer.jsx";
 
 function App() {
     const CLIENT_ID = "7977f05d237f4bb5bba138d645ccffb8"
-    const REDIRECT_URI = "https://nameify.vercel.app"
+    // "https://nameify.vercel.app"
+    const REDIRECT_URI = "http://localhost:5173"
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
@@ -236,7 +237,7 @@ function App() {
                         <div key={playlist.id} className="playlist">
                             {playlist.images.length ? 
                                 <button className="playlist-button" type="button" onClick={() => handlePlaylistKeyChange(playlist)}>
-                                    <img width={"100%"} src={playlist.images[0].url} alt="playlist picture"/> 
+                                    <img src={playlist.images[0].url} alt="playlist picture"/> 
                                 </button>
 
                             : <div>No Image</div>}
@@ -269,7 +270,8 @@ function App() {
                 <div className="submit">
                     <form onSubmit={handleSubmit} >
                         <div className="submit-query">
-                            genre/mood/purpose: <input
+                            <p>genre/mood/purpose: </p>
+                            <input
                             placeholder="what's it about?"
                             type="text"
                             className="input"
@@ -304,6 +306,7 @@ function App() {
     return (
         <div className="app">
             <ParticleBackground/>
+            <div className="section-1">
             <div className="header" style={step==0?{marginTop: "30vh"}:{marginTop: "3rem"}}>
                 {token ? <button onClick={logout}className= "app-logout"> logout</button>: <></>}
             </div>
@@ -327,13 +330,19 @@ function App() {
             {step==2 ? renderModel() : <></>}
             {step==3 ? renderResponse(): <></>}
             <div/> {/*no idea why this empty div has to be here but it need to be here*/ }
-            <motion.img
-            style={{ scale: 0.1}}
-                src={"/arrow.png"}
-                initial={{rotate: 180}}
-                whileInView={{ rotate: 0}}
-                transition={{duration: .2,}}
-            />
+            </div>
+
+            <div className="arrow-container">
+                <motion.img
+                style={{ scale: 0.1}}
+                    src={"/arrow.png"}
+                    initial={{rotate: 180}}
+                    whileInView={{ rotate: 0}}
+                    transition={{duration: .2,}}
+                />
+                
+            </div>
+    
             <Footer step={step}/>
             
 
