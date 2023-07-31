@@ -43,7 +43,10 @@ function Footer(props) {
 
                             </p>
                         </div>
-                        <h3> created by <a href="https://liaolucas.com">lucas liao</a>. 2023</h3>
+                        <div className="footer-credits">
+                            <h3> created by <a href="https://liaolucas.com">lucas liao</a>. 2023</h3>
+                            <div className="github-img-wrapper"> <a href="https://github.com/lucasliao0403/nameify"><img src="/github.png"></img></a> </div>
+                        </div>
                     </div>
 
                 </div>

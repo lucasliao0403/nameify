@@ -10,8 +10,13 @@ import Footer from "./Footer.jsx";
 
 function App() {
     const CLIENT_ID = "7977f05d237f4bb5bba138d645ccffb8"
-    // http://localhost:5173
-    const REDIRECT_URI = "https://nameify.vercel.app"
+    let REDIRECT_URL = ""
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+        REDIRECT_URL = "http://localhost:5173"
+    } else {
+        REDIRECT_URL = "https://nameify.vercel.app"
+    }
+ 
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
@@ -318,7 +323,7 @@ function App() {
 
                 <div className="app-auth">
                     {!token ?
-                        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${scopes.join("%20")}&response_type=${RESPONSE_TYPE}`}>
+                        <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL}&scope=${scopes.join("%20")}&response_type=${RESPONSE_TYPE}`}>
                             <p>login to spotify</p>
                         </a>
                         : <></>}
