@@ -2,6 +2,11 @@ import React from 'react';
 import {motion} from "framer-motion";
 
 function Footer(props) {
+
+    function copy(input){
+
+    }
+
     return (
         <motion.div 
         className="about"
@@ -15,31 +20,37 @@ function Footer(props) {
                         <div className="footer-outline">
                             <h2> How does it work? </h2>
                             <p> 
-                                <span>Nameify</span> uses Spotify's&nbsp;
+                                <span>Nameify</span> uses Spotify's
 
                                 <a href="https://developer.spotify.com/documentation/web-api/reference/get-audio-features">
                                 Audio Features
                                 </a>
 
-                                &nbsp;to analyze track properties such as 
-                                danceability, energy, and&nbsp;
+                                to analyze track properties such as 
+                                danceability, energy, and
 
                                 <a href="https://en.wikipedia.org/wiki/Valence_(psychology)">
-                                valence
-                                </a>.
+                                valence.
+                                </a>
 
-                                The properties are normalized through a&nbsp;
+                                The properties are normalized through a
                                 <a href="https://en.wikipedia.org/wiki/Quantile_normalization">
                                     percentile distribution
-                                </a> and a&nbsp; 
+                                </a>and a 
 
                                 <a href="https://en.wikipedia.org/wiki/Sigmoid_function">
-                                    sigmoid transform
-                                </a>,
+                                    sigmoid transform,
+                                </a>
                                 
-                                then passed into&nbsp;
+                                then passed into
                                 <a href="https://platform.openai.com/docs/models">GPT-3.5</a>
-                                &nbsp;along with the prompt to generate playlist names.
+                                along with the prompt to generate playlist names.
+
+                                <br/><br/>
+                                note: spotify does not allow public accounts to access their API. if you want to use this app, please access a test account: 
+                                
+                                user: <button onClick={() => {navigator.clipboard.writeText(this.state.textToCopy)}}>31vehuhhrwsmm7mdx6kwdr5lxaca</button> <br/>
+                                password: <button onClick={() => {navigator.clipboard.writeText(this.state.textToCopy)}}>/1234567</button>
 
                             </p>
                         </div>

@@ -163,6 +163,19 @@
     outline: 2px solid white;
 }
 
+.footer-outline a{
+    margin: 0 .5rem;
+}
+
+.footer-outline button{
+    outline: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    color: rgb(var(--green))
+}
+
+
 .footer-container h2 {
     padding-top: 1rem;
 }
